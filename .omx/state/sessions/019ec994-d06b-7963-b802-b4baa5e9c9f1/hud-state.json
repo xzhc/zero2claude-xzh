@@ -1,6 +1,0 @@
-{
-  "last_turn_at": "2026-06-15T04:46:23.419Z",
-  "turn_count": 2,
-  "last_progress_at": "2026-06-15T04:46:23.419Z",
-  "last_agent_output": "你现在的状态是：\n\n- 当前 `codex`：`/Users/xzh/.nvm/versions/node/v25.6.0/bin/codex`\n- 已安装的重复副本：\n  - `v24.1.0`：`"
-}
