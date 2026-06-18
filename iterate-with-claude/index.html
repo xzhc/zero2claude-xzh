@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f5f5f5;
+      color: #1a1a1a;
+    }
+
+    .form-card {
+      background: #fff;
+      padding: 2.5rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 16px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 440px;
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 2rem;
+    }
+
+    .field {
+      margin-bottom: 1.25rem;
+    }
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      margin-bottom: 0.375rem;
+      color: #333;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 0.675rem 0.75rem;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      transition: border-color 0.15s;
+      outline: none;
+    }
+
+    input:focus, textarea:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    input.error, textarea.error {
+      border-color: #dc2626;
+    }
+
+    .error-msg {
+      font-size: 0.8rem;
+      color: #dc2626;
+      margin-top: 0.25rem;
+      display: none;
+    }
+
+    .error-msg.visible {
+      display: block;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    button:disabled {
+      background: #93c5fd;
+      cursor: not-allowed;
+    }
+
+    .success {
+      text-align: center;
+      color: #16a34a;
+      font-weight: 500;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .success.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <form class="form-card" id="contactForm" novalidate>
+    <h1>Contact Us</h1>
+    <p class="subtitle">We'll get back to you within 24 hours.</p>
+
+    <div class="field">
+      <label for="name">Name</label>
+      <input type="text" id="name" name="name" placeholder="Your name" autocomplete="name" required>
+      <span class="error-msg" id="nameError">Please enter your name.</span>
+    </div>
+
+    <div class="field">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" required>
+      <span class="error-msg" id="emailError">Please enter a valid email address.</span>
+    </div>
+
+    <div class="field">
+      <label for="message">Message</label>
+      <textarea id="message" name="message" placeholder="Your message…" required></textarea>
+      <span class="error-msg" id="messageError">Please enter your message.</span>
+    </div>
+
+    <button type="submit">Send message</button>
+    <div class="success" id="successMsg">Message sent — thank you!</div>
+  </form>
+
+  <script>
+    const form = document.getElementById('contactForm');
+    const nameEl = document.getElementById('name');
+    const emailEl = document.getElementById('email');
+    const messageEl = document.getElementById('message');
+    const successEl = document.getElementById('successMsg');
+    const submitBtn = form.querySelector('button');
+
+    function showError(input, errorEl, show) {
+      if (show) {
+        input.classList.add('error');
+        errorEl.classList.add('visible');
+      } else {
+        input.classList.remove('error');
+        errorEl.classList.remove('visible');
+      }
+    }
+
+    function validate() {
+      let valid = true;
+
+      const nameOk = nameEl.value.trim().length > 0;
+      showError(nameEl, document.getElementById('nameError'), !nameOk);
+      valid = valid && nameOk;
+
+      const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailEl.value.trim());
+      showError(emailEl, document.getElementById('emailError'), !emailOk);
+      valid = valid && emailOk;
+
+      const messageOk = messageEl.value.trim().length > 0;
+      showError(messageEl, document.getElementById('messageError'), !messageOk);
+      valid = valid && messageOk;
+
+      return valid;
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (!validate()) return;
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+
+      setTimeout(function () {
+        successEl.classList.add('visible');
+        form.reset();
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send message';
+      }, 800);
+    });
+
+    [nameEl, emailEl, messageEl].forEach(function (el) {
+      el.addEventListener('input', function () {
+        if (el.classList.contains('error')) {
+          validate();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
