@@ -4,7 +4,8 @@ const port = 3001;
     
 app.use(express.static('public'));
 
-app.get('/', (req, res) => {    
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '/public/index.html');
 });
 
 app.get('/about', (req, res) => {
@@ -20,10 +21,10 @@ app.get('/api/time', (req, res) => {
 
 app.get('/api/greeting', (req, res) => {
     const name = req.query.name || 'World'
-    res.json({greeting: 'Hello' + name + "!"})
+    res.json({greeting: 'Hello, ' + name + "!"})
 })
 
 app.listen(port, () => {
-    console.log("The server is running");
+    console.log("Server running at http://localhost:" + port);
 })
     
