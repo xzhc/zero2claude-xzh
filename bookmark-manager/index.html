@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookmark Manager</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #f0f2f5;
+      color: #1a1a2e;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 48px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+    }
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      color: #16213e;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.04);
+      margin-bottom: 20px;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-group.url { flex: 2; }
+    .form-group.title { flex: 1; }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: #6b7280;
+    }
+
+    input {
+      padding: 10px 14px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: border-color 0.15s;
+      outline: none;
+      width: 100%;
+    }
+
+    input:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    button:active { transform: scale(0.97); }
+
+    .btn-add {
+      background: #4f46e5;
+      color: #fff;
+      white-space: nowrap;
+    }
+
+    .btn-add:hover { background: #4338ca; }
+
+    .bookmark-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bookmark-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      transition: box-shadow 0.15s;
+    }
+
+    .bookmark-item:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    .bookmark-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .bookmark-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bookmark-title a {
+      color: #16213e;
+      text-decoration: none;
+    }
+
+    .bookmark-title a:hover {
+      color: #4f46e5;
+      text-decoration: underline;
+    }
+
+    .bookmark-url {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn-delete {
+      background: transparent;
+      color: #9ca3af;
+      padding: 6px 10px;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .btn-delete:hover {
+      color: #ef4444;
+      background: #fef2f2;
+    }
+
+    .search-row {
+      margin-bottom: 16px;
+    }
+
+    #searchInput {
+      width: 100%;
+      padding: 10px 36px 10px 14px;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.15s;
+      background: #f8f9fb url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") no-repeat right 12px center;
+    }
+
+    #searchInput:focus {
+      border-color: #4f46e5;
+      box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+      background-color: #fff;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: #9ca3af;
+      font-size: 0.95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Bookmarks</h1>
+
+    <div class="card">
+      <div class="form-row">
+        <div class="form-group url">
+          <label for="url">URL</label>
+          <input id="url" type="url" placeholder="https://example.com" autofocus>
+        </div>
+        <div class="form-group title">
+          <label for="title">Title</label>
+          <input id="title" type="text" placeholder="My bookmark">
+        </div>
+        <button class="btn-add" id="addBtn">Add</button>
+      </div>
+    </div>
+
+    <div class="card" id="listCard">
+      <div class="search-row">
+        <input id="searchInput" type="search" placeholder="Search by title...">
+      </div>
+      <ul class="bookmark-list" id="bookmarkList"></ul>
+      <div class="empty-state" id="emptyState">No bookmarks yet. Add one above.</div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'bookmarks';
+
+    function load() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+      catch { return []; }
+    }
+
+    function save(bookmarks) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks));
+    }
+
+    function render() {
+      const bookmarks = load();
+      const list = document.getElementById('bookmarkList');
+      const empty = document.getElementById('emptyState');
+      const searchInput = document.getElementById('searchInput');
+      const query = searchInput ? searchInput.value.toLowerCase() : '';
+
+      const items = query
+        ? bookmarks.map((bm, i) => ({ bm, i })).filter(({ bm }) => bm.title.toLowerCase().includes(query))
+        : bookmarks.map((bm, i) => ({ bm, i }));
+
+      list.innerHTML = '';
+
+      if (items.length === 0) {
+        empty.style.display = 'block';
+        empty.textContent = bookmarks.length === 0
+          ? 'No bookmarks yet. Add one above.'
+          : 'No bookmarks match your search.';
+      } else {
+        empty.style.display = 'none';
+      }
+
+      items.forEach(({ bm, i }) => {
+        const li = document.createElement('li');
+        li.className = 'bookmark-item';
+        li.innerHTML = `
+          <div class="bookmark-info">
+            <div class="bookmark-title">
+              <a href="${escapeAttr(bm.url)}" target="_blank" rel="noopener">${escapeHtml(bm.title || bm.url)}</a>
+            </div>
+            <div class="bookmark-url">${escapeHtml(bm.url)}</div>
+          </div>
+          <button class="btn-delete" data-index="${i}" title="Delete">Delete</button>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    function addBookmark() {
+      const urlInput = document.getElementById('url');
+      const titleInput = document.getElementById('title');
+      let url = urlInput.value.trim();
+      const title = titleInput.value.trim();
+
+      if (!url) return;
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+
+      const bookmarks = load();
+      bookmarks.push({ url, title });
+      save(bookmarks);
+
+      urlInput.value = '';
+      titleInput.value = '';
+      urlInput.focus();
+      render();
+    }
+
+    function deleteBookmark(index) {
+      const bookmarks = load();
+      bookmarks.splice(index, 1);
+      save(bookmarks);
+      render();
+    }
+
+    function escapeHtml(str) {
+      const d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    function escapeAttr(str) {
+      return str.replace(/&/g, '&amp;').replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    document.getElementById('addBtn').addEventListener('click', addBookmark);
+    document.getElementById('title').addEventListener('keydown', e => {
+      if (e.key === 'Enter') addBookmark();
+    });
+    document.getElementById('url').addEventListener('keydown', e => {
+      if (e.key === 'Enter') addBookmark();
+    });
+    document.getElementById('bookmarkList').addEventListener('click', e => {
+      const btn = e.target.closest('.btn-delete');
+      if (btn) deleteBookmark(parseInt(btn.dataset.index));
+    });
+
+    document.getElementById('searchInput').addEventListener('input', render);
+
+    render();
+  </script>
+</body>
+</html>
