@@ -1,3 +1,4 @@
 .omx/
 .env
 .mcp.json
+tic-tac-toe/node_modules/
